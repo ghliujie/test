@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>注册</title>
+    <link rel="stylesheet" type="text/css" href="css/common.css">
+    <link rel="stylesheet" type="text/css" href="css/register.css">
+    <!--导入jquery-->
+    <script src="js/jquery-3.3.1.js"></script>
+
+    <script>
+        // 表单数据校验
+
+        $(function () {
+            $("#registerForm").submit(function () {
+                if (checkUsername() && checkPassword() && check()) {//()&&checkEmail()&&checkTelephone();
+
+                    // serialize() 序列化数据 key:value类型
+                    $.post("user/register", $(this).serialize(), function (data) {
+
+                        console.log(data.flag);
+                        if (data.flag) {
+                            location.href = "register_ok.html";
+                        } else {
+                            $("#errorMessage").html(data.errorMsg);
+                        }
+                    });
+                }
+
+
+                return false;
+            });
+            $("#username").blur(checkUsername);
+            $("#password").blur(checkPassword);
+            $("#email").blur(checkEmail);
+            $("#telephone").blur(checkTelephone);
+            $("#birthday").blur(checkBirthday);
+            $("#name").blur(checkName);
+            $("#check").blur(check);
+
+        });
+
+        function check() {
+            var check = $("#check");
+            return deal('check',check,"不能为空");
+        }
+
+        function dealRegEpx(regEpx, id, val, message) {
+            if (regEpx.test(val)) {
+                $("#" + id + "Message").html("");
+                return true;
+            } else {
+                $("#" + id + "Message").html(message);
+                return false;
+            }
+        }
+
+
+        function deal(id, val, message) {
+            if (val == null || val.length === 0) {
+                $("#" + id + "Message").html(message);
+                return false;
+            } else {
+                $("#" + id + "Message").html("");
+                return true;
+            }
+        }
+
+        // 检验用户名 长度8-20个字符
+        function checkUsername() {
+
+            var username = $("#username").val();
+
+            var regEpx_username = /^\w{8,20}$/;
+
+            return deal('username', username, "用户名不能为空") && dealRegEpx(regEpx_username, 'username', username, "长度8-20个字符之间");
+        }
+
+        function checkPassword() {
+
+            var password = $("#password").val();
+
+            var regExp_password = /^\w{8,20}$/;
+
+            return deal('password', password, "密码不能为空") && dealRegEpx(regExp_password, 'password', password, "长度8-20个字符之间");
+        }
+
+        function checkEmail() {
+
+            var email = $("#email").val();
+
+            var regExp_Email = /^\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}$/;
+
+            return dealRegEpx(regExp_Email, 'email', email, "邮箱格式错误");
+        }
+
+        function checkName() {
+
+            var name = $("#name").val();
+
+            return deal('name', name, "名字不能为空");
+        }
+
+        function checkTelephone() {
+
+            var telephone = $("#telephone").val();
+
+            var regEpx_telephone = /^(13\d|14[579]|15[^4\D]|17[^49\D]|18\d)\d{8}$/;
+
+
+            return dealRegEpx(regEpx_telephone, 'telephone', telephone, "号码格式错误");
+
+        }
+
+
+        function checkBirthday() {
+
+
+            var birthday = $("#birthday").val();
+
+            var regExp_birthday = /^\d{4}(\-|\/|.)\d{1,2}\1\d{1,2}$/;
+
+            return dealRegEpx(regExp_birthday, 'birthday', birthday, "日期格式错误");
+
+        }
+    </script>
+</head>
+<body>
+<!--引入头部-->
+<div id="header"></div>
+<!-- 头部 end -->
+<div class="rg_layout">
+    <div class="rg_form clearfix">
+        <div class="rg_form_left">
+            <p>新用户注册</p>
+            <p>USER REGISTER</p>
+        </div>
+        <div class="rg_form_center">
+
+
+            <!--注册表单-->
+            <form id="registerForm">
+                <!--提交处理请求的标识符-->
+                <div id="errorMessage" style="color:red;text-align: center"></div>
+                <input type="hidden" name="action" value="register">
+                <table style="margin-top: 25px;">
+                    <tr>
+                        <td class="td_left">
+                            <label for="username">用户名</label>
+                        </td>
+                        <td class="td_right" style="position: relative;">
+                            <input type="text" id="username" name="username" placeholder="请输入账号"/>
+                        </td>
+                        <td style="position: relative;">
+                            <span id="usernameMessage"
+                                  style="position:absolute; color:red;top: 14px;display: block;width: 200px"></span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="td_left">
+                            <label for="password">密码</label>
+                        </td>
+                        <td class="td_right">
+                            <input type="password" id="password" name="password" placeholder="请输入密码"/>
+                        </td>
+                        <td style="position: relative;" width="20px">
+                            <span id="passwordMessage"
+                                  style="position:absolute; color:red;top: 14px;display: block;width: 200px"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="td_left">
+                            <label for="email">Email</label>
+                        </td>
+                        <td class="td_right">
+                            <input type="text" id="email" name="email" placeholder="请输入Email"/>
+                        </td>
+                        <td style="position: relative;">
+                            <span id="emailMessage"
+                                  style="position:absolute; color:red;top: 14px;display: block;width: 200px"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="td_left">
+                            <label for="name">姓名</label>
+                        </td>
+                        <td class="td_right">
+                            <input type="text" id="name" name="name" placeholder="请输入真实姓名"/>
+                        </td>
+                        <td style="position: relative;">
+                            <span id="nameMessage" style="position:absolute; color:red;top: 14px;"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="td_left">
+                            <label for="telephone">手机号</label>
+                        </td>
+                        <td class="td_right">
+                            <input type="text" id="telephone" name="telephone" placeholder="请输入您的手机号"/>
+                        </td>
+                        <td style="position: relative;">
+                            <span id="telephoneMessage"
+                                  style="position:absolute; color:red;top: 14px;display: block;width: 200px"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="td_left">
+                            <label for="sex">性别</label>
+                        </td>
+                        <td class="td_right gender">
+                            <input type="radio" id="sex" name="sex" value="男" checked/> 男
+                            <input type="radio" name="sex" value="女"/> 女
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="td_left">
+                            <label for="birthday">出生日期</label>
+                        </td>
+                        <td class="td_right">
+                            <input type="date" id="birthday" name="birthday" placeholder="年/月/日"/>
+                        </td>
+                        <td style="position: relative;">
+                            <span id="birthdayMessage"
+                                  style="position:absolute; color:red;top: 14px;display: block;width: 200px"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="td_left">
+                            <label for="check">验证码</label>
+                        </td>
+                        <td class="td_right check">
+                            <input type="text" id="check" name="check" class="check">
+                            <img src="user/checkCode" height="32px" alt="点击更换" onclick="changeCheckCode(this)">
+                            <script type="text/javascript">
+                                //图片点击事件
+                                function changeCheckCode(img) {
+                                    img.src = "user/checkCode?" + new Date().getTime();
+                                }
+                            </script>
+                        </td>
+                        <td style="position: relative;">
+                            <span id="checkMessage"
+                                  style="position:absolute; color:red;top: 14px;display: block;width: 200px"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="td_left">
+                        </td>
+                        <td class="td_right check">
+                            <input type="submit" class="submit" value="注册">
+                            <span id="msg" style="color: red;"></span>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="rg_form_right">
+            <p>
+                已有账号？
+                <a href="#">立即登录</a>
+            </p>
+        </div>
+    </div>
+</div>
+<!--引入尾部-->
+<div id="footer"></div>
+<!--导入布局js，共享header和footer-->
+<script type="text/javascript" src="js/include.js"></script>
+
+</body>
+</html>
